@@ -344,6 +344,8 @@ See GRID_PROTOCOL_SPECIFICATION_v0.1.md §12 for detailed security analysis.
 
 ## Roadmap
 
+See the [ROADMAP.md](ROADMAP.md) for a detailed plan for the v1.0 release.
+
 ### GRID v0.1 (Current - 2025)
 - ✅ Core specification and abstractions
 - ✅ Enterprise profile (GRID-Enterprise)
