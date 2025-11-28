@@ -760,7 +760,7 @@ GRID defines two profiles for different deployment contexts:
 
 **Recommended Features:**
 - ✅ Authentication supported (not mandatory)
-- ✅ Advisory policies (recommend, don't enforce)
+- ✅ Advisory policies (logging, auditing, and recommendations, not enforcement)
 - ⚠️ Semi-immutable audit (append-only with governance)
 - ⚠️ Optional SIEM (advisory logging)
 - ⚠️ Simple policies (rule-based or declarative)

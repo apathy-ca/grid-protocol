@@ -68,7 +68,7 @@ User → AI Agent → Tool/API → Database
 - **Use case:** Regulated organizations, enterprises
 
 ### GRID-Home (YORI - Planned)
-- Advisory governance (recommendations, not enforcement)
+- Advisory governance (logging, auditing, and recommendations, not enforcement)
 - Optional SIEM
 - Simple configurations
 - Privacy-focused

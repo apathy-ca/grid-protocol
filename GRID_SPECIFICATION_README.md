@@ -204,7 +204,7 @@ The AI use case is just the most visible right now.
 ### Q: What about YORI (GRID-Home)?
 
 **A:** YORI is planned as the home/open-source profile of GRID:
-- Advisory governance (recommendations, not enforcement)
+- Advisory governance (logging, auditing, and recommendations, not enforcement)
 - Simpler setup
 - Privacy-focused
 - Community-driven policies
