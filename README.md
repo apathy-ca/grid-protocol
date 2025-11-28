@@ -171,7 +171,7 @@ Robots access shared infrastructure with zone-based and capability-based access,
 - ⚠️ MCP-focused (multi-protocol support planned for v2.0)
 - 📚 Comprehensive documentation and operations
 
-**Repository:** [github.com/anthropics/sark](https://github.com/anthropics/sark)
+**Repository:** [github.com/apathy-ca/sark](https://github.com/apathy-ca/sark)
 
 ---
 
@@ -423,7 +423,7 @@ GRID Protocol Specification v0.1 is released under the MIT License.
 ## References
 
 ### SARK Reference Implementation
-- **Repository:** [github.com/anthropics/sark](https://github.com/anthropics/sark)
+- **Repository:** [github.com/apathy-ca/sark](https://github.com/apathy-ca/sark)
 - **Documentation:** SARK docs/ directory
 - **Status:** Production-ready for MCP governance (v1.0)
 

@@ -245,7 +245,7 @@ See [CONTRIBUTING.md](../../CONTRIBUTING.md) for guidelines on contributing adap
 ## Resources
 
 - [GRID Protocol Specification](../../GRID_PROTOCOL_SPECIFICATION_v0.1.md) §9 - Protocol Adapters
-- [SARK MCP Adapter](https://github.com/anthropics/sark) - Reference implementation
+- [SARK MCP Adapter](https://github.com/apathy-ca/sark) - Reference implementation
 - [Gap Analysis](../../GRID_GAP_ANALYSIS_AND_IMPLEMENTATION_NOTES.md) §6 - Protocol Abstraction
 
 ---

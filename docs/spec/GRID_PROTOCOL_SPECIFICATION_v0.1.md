@@ -2610,4 +2610,4 @@ This specification would not exist without SARK's elegant, production-proven des
 **GRID Protocol v0.1 Specification**
 *A Universal Governance Protocol for Machine-to-Machine Interactions*
 
-For feedback, issues, or contributions: [github.com/anthropics/grid-protocol](https://github.com/anthropics/grid-protocol)
+For feedback, issues, or contributions: [github.com/apathy-ca/grid-protocol](https://github.com/apathy-ca/grid-protocol)
