@@ -185,6 +185,7 @@ This repository contains the complete GRID Protocol Specification v0.1:
 2. **GRID_PROTOCOL_SPECIFICATION_v0.1.md** – Complete technical specification (2,600 lines)
 3. **GRID_GAP_ANALYSIS_AND_IMPLEMENTATION_NOTES.md** – SARK compliance assessment
 4. **GRID_SPECIFICATION_SUMMARY.md** – Quick reference
+5. **TUTORIAL.md** - A hands-on guide to writing your first policy.
 
 ### Quick Start Paths
 

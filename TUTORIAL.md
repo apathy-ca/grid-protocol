@@ -105,7 +105,15 @@ allow if {
 
 ## Step 3: Test Your Policy (10 minutes)
 
-### Install OPA (Open Policy Agent)
+### Option A: Use the Interactive Playground
+
+The easiest way to test your policy is to use the [interactive policy playground](../playground/index.html). You can paste your policy and input directly into the browser and see the results in real-time.
+
+### Option B: Test Locally with OPA
+
+If you want to test locally, you can install the Open Policy Agent (OPA) command-line tool.
+
+#### Install OPA (Open Policy Agent)
 
 ```bash
 # macOS

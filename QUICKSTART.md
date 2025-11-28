@@ -83,6 +83,7 @@ Principal (human, AI, service, device)
 2. **Quick overview:** GRID_SPECIFICATION_SUMMARY.md
 3. **Deep dive:** GRID_PROTOCOL_SPECIFICATION_v0.1.md
 4. **For SARK:** GRID_GAP_ANALYSIS_AND_IMPLEMENTATION_NOTES.md
+5. **See it in action:** Check out the [`examples/`](examples/) directory.
 
 ## 💡 Quick Example
 

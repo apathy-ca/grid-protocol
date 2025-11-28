@@ -102,16 +102,20 @@ deny if {
 
 # Check if current time is during business hours (9 AM - 6 PM, Mon-Fri)
 is_business_hours if {
-    # Extract hour from timestamp
-    hour := time.clock([input.context.timestamp])[0]
-    
-    # Check if between 9 AM and 6 PM
+    # Parse the timestamp string into nanoseconds
+    ns := time.parse_rfc3339_ns(input.context.timestamp)
+
+    # Extract hour from nanoseconds
+    hour := time.clock(ns)[0]
+
+    # Check if between 9 AM and 6 PM UTC
     hour >= 9
     hour < 18
-    
-    # Check if weekday (0 = Sunday, 6 = Saturday)
-    day := time.weekday(input.context.timestamp)
-    day not in [0, 6]
+
+    # Check if weekday (not Saturday or Sunday)
+    day := time.weekday(ns)
+    day != "Saturday"
+    day != "Sunday"
 }
 
 # =============================================================================

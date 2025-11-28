@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  grid-server:
+    image: openpolicyagent/opa:latest-envoy
+    command:
+      - "run"
+      - "--server"
+      - "--set=plugins.envoy_ext_authz_grpc.addr=:9191"
+      - "--set=decision_logs.console=true"
+      - "/policies"
+    volumes:
+      - ./policies:/policies
+
+  app:
+    build: ./app
+    environment:
+      - GRID_SERVER_URL=http://grid-server:8181/v1/data/grid/authz/allow
+
+  tests:
+    build: ./tests
+    environment:
+      - APP_URL=http://app:5000
+    depends_on:
+      - app
+      - grid-server

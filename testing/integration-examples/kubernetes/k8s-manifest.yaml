@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grid-policy
+data:
+  policy.rego: |
+    package grid.authz
+    default allow = false
+    allow {
+        input.principal.role == "admin"
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grid-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grid-server
+  template:
+    metadata:
+      labels:
+        app: grid-server
+    spec:
+      containers:
+      - name: opa
+        image: openpolicyagent/opa:latest
+        args:
+          - "run"
+          - "--server"
+          - "/policies"
+        volumeMounts:
+        - name: grid-policy-volume
+          mountPath: /policies
+      volumes:
+      - name: grid-policy-volume
+        configMap:
+          name: grid-policy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grid-server
+spec:
+  selector:
+    app: grid-server
+  ports:
+  - protocol: TCP
+    port: 8181
+    targetPort: 8181
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - name: app
+        image: grid-app:latest # Assumes a local image build
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        env:
+        - name: GRID_SERVER_URL
+          value: "http://grid-server:8181/v1/data/grid/authz/allow"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+spec:
+  selector:
+    app: app
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: grid-test
+spec:
+  template:
+    metadata:
+      labels:
+        app: grid-test
+    spec:
+      containers:
+      - name: test
+        image: grid-test:latest # Assumes a local image build
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: APP_URL
+          value: "http://app:5000"
+      restartPolicy: Never
+  backoffLimit: 4
