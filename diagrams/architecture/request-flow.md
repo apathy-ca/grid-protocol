@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant P as Principal
     participant G as GRID Gateway
@@ -14,3 +15,4 @@ sequenceDiagram
     else Access Denied
         G-->>P: 403 Forbidden
     end
+```

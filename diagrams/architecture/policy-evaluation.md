@@ -1,3 +1,4 @@
+```mermaid
 graph TD
     A[Request] --> B{Policy Cache}
     B -->|Cache Hit| C[Decision]
@@ -7,3 +8,4 @@ graph TD
     F --> G[Update Cache]
     G --> C
     C --> H[Enforcement]
+```

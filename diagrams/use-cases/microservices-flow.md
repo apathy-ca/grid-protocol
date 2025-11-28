@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant S1 as Service A
     participant G as GRID Gateway
@@ -8,3 +9,4 @@ sequenceDiagram
     G-->>S1: Allow
     S1->>S2: Call Service B API
     S2-->>S1: Response
+```

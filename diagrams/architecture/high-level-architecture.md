@@ -1,3 +1,4 @@
+```mermaid
 graph TD
     subgraph Principals
         A[Users]
@@ -19,3 +20,4 @@ graph TD
 
     A & B & C --> D
     G --> H & I & J
+```

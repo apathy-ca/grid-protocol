@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant PA as Principal (Org A)
     participant GA as GRID Node A
@@ -11,3 +12,4 @@ sequenceDiagram
     GA->>RB: Forward Request
     RB-->>GA: Response
     GA-->>PA: Response
+```

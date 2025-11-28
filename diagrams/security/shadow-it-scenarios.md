@@ -1,3 +1,4 @@
+```mermaid
 graph TD
     subgraph Governed Path
         A[User] --> B[SARK Gateway]
@@ -10,3 +11,4 @@ graph TD
         F --> G[No Policy Check]
         G --> H[No Audit Trail]
     end
+```

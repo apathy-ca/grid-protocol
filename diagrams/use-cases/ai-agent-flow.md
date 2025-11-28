@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant U as User
     participant A as AI Agent
@@ -10,3 +11,4 @@ sequenceDiagram
     A->>T: Invoke jira.search tool
     T-->>A: Tool result
     A-->>U: "Here are the bugs..."
+```

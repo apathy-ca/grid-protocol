@@ -1,3 +1,4 @@
+```mermaid
 graph TD
     subgraph Organization A
         A[GRID Node A]
@@ -8,3 +9,4 @@ graph TD
     end
 
     A -- Trust Established --> B
+```
