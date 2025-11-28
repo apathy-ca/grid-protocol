@@ -5,7 +5,7 @@ date: "2025-11-28"
 tags: ["grid", "authorization", "security", "release"]
 ---
 
-We are thrilled to announce the v0.1 release of the Governance and aRmor Integration standard for Decentralized systems (GRID). This release marks a major milestone in our journey to create a universal, policy-based authorization framework for the modern era of distributed systems.
+We are thrilled to announce the v0.1 release of the Governed Resource Interaction Definition (GRID) Protocol Specification. This release marks a major milestone in our journey to create a universal, policy-based authorization framework for the modern era of distributed systems.
 
 ## What is GRID?
 
