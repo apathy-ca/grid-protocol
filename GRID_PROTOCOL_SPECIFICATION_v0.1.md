@@ -2579,16 +2579,31 @@ is_trusted_agent(agent_id) if {
 
 ---
 
-## Contributors
+## Attribution & Contributors
 
-This specification was reverse-engineered from the SARK (Secure Autonomous Resource Kontroller) reference implementation by analyzing:
+**GRID Protocol Specification v0.1** was reverse-engineered from the **SARK (Secure Autonomous Resource Kontroller)** reference implementation.
 
+**Original Design & Implementation:**
+- **James R. A. Henry** - SARK architect and maintainer
+  - Designed and built the reference implementation
+  - Created the architecture that makes this specification possible
+
+**Specification & Analysis:**
+- **Claude Code** (Anthropic's Claude via Claude Code)
+  - Reverse-engineered patterns from SARK codebase
+  - Extracted universal governance concepts from MCP-specific implementation
+  - Formalized GRID specification
+  - Analyzed SARK's GRID compliance
+
+**Reference Materials Analyzed:**
 - SARK architecture and design patterns
 - Policy engine integration (OPA/Rego)
 - Authentication and authorization flows
 - Audit logging and SIEM integration
 - Protocol abstraction patterns
 - Configuration and extension points
+
+This specification would not exist without SARK's elegant, production-proven design. GRID documents what SARK demonstrates: that universal machine-to-machine governance is possible, practical, and deployable at enterprise scale.
 
 ---
 
