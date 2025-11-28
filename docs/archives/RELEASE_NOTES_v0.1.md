@@ -28,7 +28,7 @@ This release includes the complete GRID Protocol Specification v0.1, along with 
 ### Examples & Schemas
 *   **Practical Examples:** A rich `examples/` directory with sample policies, protocol adapters, and integration examples.
 *   **Schemas and OpenAPI:** A `schemas/` directory with JSON schemas for all core abstractions and a complete OpenAPI specification.
-*   **Diagrams:** A `diagrams/` directory with architecture, federation, security, and use-case diagrams.
+*   **Diagrams:** A [`diagrams/`](../../diagrams/) directory with architecture, federation, security, and use-case diagrams.
 
 ### Testing Framework
 *   **Compliance Suite:** A full compliance suite to validate GRID implementations.

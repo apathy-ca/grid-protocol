@@ -191,7 +191,7 @@ schemas/
 
 ### Deliverables
 
-#### 5.1 diagrams/ Directory
+#### 5.1 [diagrams/](../../diagrams/) Directory
 ```
 diagrams/
 ├── architecture/

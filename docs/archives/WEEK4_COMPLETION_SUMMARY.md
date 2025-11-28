@@ -111,7 +111,7 @@
 
 ### Planned Deliverables
 1. **Visual Documentation & Diagrams**
-   - diagrams/ directory with architecture, federation, security, and use case diagrams
+   - [`diagrams/`](../../diagrams/) directory with architecture, federation, security, and use case diagrams
    - VISUAL_GUIDE.md
 
 2. **Remaining Week 1 Items**
@@ -133,5 +133,5 @@ Week 4 successfully delivered the API reference and technical schemas for the GR
 
 **Next Steps:**
 1. Review Week 4 deliverables
-2. Begin Week 5: diagrams/ and VISUAL_GUIDE.md
+2. Begin Week 5: [`diagrams/`](../../diagrams/) and VISUAL_GUIDE.md
 3. Complete deferred Week 1 items

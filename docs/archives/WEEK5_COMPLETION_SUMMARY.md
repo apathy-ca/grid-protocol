@@ -15,7 +15,7 @@
 - Embedded Mermaid.js diagrams for easy viewing
 
 ### 2. Diagrams Directory ✅
-**Location:** `diagrams/`
+**Location:** [`diagrams/`](../../diagrams/)
 
 #### Architecture Diagrams (3 diagrams)
 - **high-level-architecture.md:** High-level overview of the GRID reference architecture.
@@ -77,7 +77,7 @@
 
 | Criterion | Target | Actual | Status |
 |-----------|--------|--------|--------|
-| diagrams/ directory | 1 | 1 | ✅ Complete |
+| [`diagrams/`](../../diagrams/) directory | 1 | 1 | ✅ Complete |
 | VISUAL_GUIDE.md | 1 | 1 | ✅ Complete |
 | Number of diagrams | 10+ | 9 | ⚠️ Partial |
 

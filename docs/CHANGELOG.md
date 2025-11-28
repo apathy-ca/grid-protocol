@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Examples & Schemas:**
   - `examples/` directory with policies, adapters, and integrations.
   - `schemas/` directory with JSON schemas and OpenAPI spec.
-  - `diagrams/` directory with architecture and use-case diagrams.
+  - [`diagrams/`](../diagrams/) directory with architecture and use-case diagrams.
 - **Testing Framework:**
   - `testing/` directory with a full compliance suite, integration examples (Docker, Kubernetes, Terraform), and a performance benchmarking suite.
 - **Community Tools:**
