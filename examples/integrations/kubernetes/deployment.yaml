@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grid-gateway
+  labels:
+    app: grid-gateway
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: grid-gateway
+  template:
+    metadata:
+      labels:
+        app: grid-gateway
+    spec:
+      containers:
+      - name: grid-gateway
+        image: anthropics/sark:latest # Replace with your GRID implementation image
+        ports:
+        - containerPort: 8000
+        env:
+        - name: GRID_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: grid-secrets
+              key: database_url
+        - name: GRID_JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: grid-secrets
+              key: jwt_secret
+        - name: GRID_OPA_URL
+          value: http://opa.opa.svc.cluster.local:8181/v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grid-gateway
+spec:
+  selector:
+    app: grid-gateway
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: LoadBalancer

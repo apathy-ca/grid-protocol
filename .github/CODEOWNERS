@@ -1,0 +1,25 @@
+# This file is used to automatically request reviews on pull requests.
+# See https://help.github.com/articles/about-code-owners/
+
+# Default owners
+* @grid-protocol/maintainers
+
+# Specification documents
+/GRID_*.md @grid-protocol/spec-shepherds
+
+# Policy examples
+/examples/policies/ @grid-protocol/policy-experts
+
+# Adapter examples
+/examples/adapters/ @grid-protocol/adapter-experts
+
+# Integrations
+/examples/integrations/ @grid-protocol/ops-team
+
+# Documentation
+/docs/ @grid-protocol/docs-team
+/TUTORIAL.md @grid-protocol/docs-team
+/CONTRIBUTING.md @grid-protocol/community-managers
+
+# CI/CD
+/.github/workflows/ @grid-protocol/ops-team

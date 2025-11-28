@@ -1,0 +1,105 @@
+openapi: 3.0.0
+info:
+  title: GRID Protocol API
+  version: 0.1.0
+  description: API for the Governed Resource Interaction Definition (GRID) protocol.
+
+servers:
+  - url: /api/v1
+
+paths:
+  /policy/evaluate:
+    post:
+      summary: Evaluate a policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                principal_id:
+                  type: string
+                resource_id:
+                  type: string
+                action:
+                  type: string
+                context:
+                  type: object
+      responses:
+        '200':
+          description: Policy evaluation result
+        '403':
+          description: Access denied
+
+  /resources:
+    get:
+      summary: List resources
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: sensitivity
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of resources
+
+    post:
+      summary: Register a resource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+      responses:
+        '201':
+          description: Resource created
+
+  /audit:
+    get:
+      summary: Query audit log
+      parameters:
+        - name: from_timestamp
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to_timestamp
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: principal_id
+          in: query
+          schema:
+            type: string
+        - name: resource_id
+          in: query
+          schema:
+            type: string
+        - name: decision
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of audit events
+
+components:
+  schemas:
+    Resource:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        name:
+          type: string
+        sensitivity:
+          type: string

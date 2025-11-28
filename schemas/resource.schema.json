@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GRID Resource Schema",
+  "type": "object",
+  "required": [
+    "id",
+    "type",
+    "name",
+    "sensitivity"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique resource identifier"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["tool", "data", "service", "device"],
+      "description": "Resource type"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable name for the resource"
+    },
+    "sensitivity": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"],
+      "description": "Sensitivity level of the resource"
+    }
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GRID Audit Event Schema",
+  "type": "object",
+  "required": [
+    "id",
+    "timestamp",
+    "principal",
+    "resource",
+    "action",
+    "decision"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique event identifier (UUID)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When event occurred (UTC ISO 8601)"
+    },
+    "request_id": {
+      "type": "string",
+      "description": "Request identifier for correlation"
+    },
+    "principal": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Principal identifier"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["human", "agent", "service", "device"],
+          "description": "Principal type"
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "role": {"type": "string"},
+            "teams": {"type": "array", "items": {"type": "string"}},
+            "department": {"type": "string"}
+          }
+        }
+      }
+    },
+    "resource": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Resource identifier"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["tool", "data", "service", "device"],
+          "description": "Resource type"
+        },
+        "name": {
+          "type": "string"
+        },
+        "sensitivity": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"]
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "required": ["operation"],
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["read", "write", "execute", "control", "manage", "audit"]
+        },
+        "parameters": {
+          "type": "object",
+          "description": "Sanitized action parameters"
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "required": ["result"],
+      "properties": {
+        "result": {
+          "type": "string",
+          "enum": ["allow", "deny", "error"],
+          "description": "Authorization decision"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Decision rationale"
+        },
+        "policy_id": {
+          "type": "string",
+          "description": "Policy that decided"
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "ip_address": {"type": "string"},
+        "user_agent": {"type": "string"},
+        "environment": {
+          "type": "string",
+          "enum": ["dev", "staging", "prod"]
+        },
+        "metadata": {"type": "object"}
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "properties": {
+        "success": {"type": "boolean"},
+        "error": {"type": ["string", "null"]},
+        "latency_ms": {"type": "number"},
+        "cost": {"type": "number"}
+      }
+    }
+  }
+}

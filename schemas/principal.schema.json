@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GRID Principal Schema",
+  "type": "object",
+  "required": [
+    "id",
+    "type"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique principal identifier"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["human", "agent", "service", "device"],
+      "description": "Principal type"
+    },
+    "attributes": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "type": "string",
+          "description": "The role of the principal"
+        },
+        "teams": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The teams the principal belongs to"
+        },
+        "department": {
+          "type": "string",
+          "description": "The department the principal belongs to"
+        }
+      }
+    }
+  }
+}

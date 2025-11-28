@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GRID Action Schema",
+  "type": "object",
+  "required": [
+    "operation"
+  ],
+  "properties": {
+    "operation": {
+      "type": "string",
+      "enum": ["read", "write", "execute", "control", "manage", "audit"],
+      "description": "The operation being performed"
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Sanitized action parameters"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+name: Validate Examples
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-rego-policies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup OPA
+        uses: open-policy-agent/setup-opa@v2
+        with:
+          opa-version: latest
+
+      - name: Check Rego policies
+        run: opa check examples/policies/*.rego
+
+      - name: Test Rego policies
+        run: opa test examples/policies/
+
+  validate-python-adapters:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-dev.txt
+        working-directory: examples/adapters
+        if: hashFiles('examples/adapters/requirements-dev.txt') != ''
+
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        working-directory: examples/adapters
+
+      - name: Run Python syntax check
+        run: python -m compileall examples/adapters/
