@@ -195,8 +195,8 @@ schemas/
 ```
 diagrams/
 ├── architecture/
-│   ├── high-level-architecture.svg
-│   ├── request-flow.svg
+│   ├── [high-level-architecture.md](../../diagrams/architecture/high-level-architecture.md)
+│   ├── [request-flow.md](../../diagrams/architecture/request-flow.md)
 │   ├── policy-evaluation.svg
 │   └── README.md
 ├── federation/

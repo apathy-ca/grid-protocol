@@ -18,8 +18,8 @@
 **Location:** [`diagrams/`](../../diagrams/)
 
 #### Architecture Diagrams (3 diagrams)
-- **high-level-architecture.md:** High-level overview of the GRID reference architecture.
-- **request-flow.md:** The flow of a request through the GRID governance layer.
+- **[high-level-architecture.md](../../diagrams/architecture/high-level-architecture.md):** High-level overview of the GRID reference architecture.
+- **[request-flow.md](../../diagrams/architecture/request-flow.md):** The flow of a request through the GRID governance layer.
 - **policy-evaluation.md:** The policy evaluation process, including caching.
 
 #### Federation Diagrams (2 diagrams)
