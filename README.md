@@ -166,9 +166,10 @@ Robots access shared infrastructure with zone-based and capability-based access,
 
 **SARK (Secure Autonomous Resource Kontroller)** is the enterprise reference implementation of GRID v0.1.
 
-- ✅ **85% GRID v0.1 Compliant**
-- ✅ Production-ready for MCP governance
-- ⚠️ MCP-focused (multi-protocol support planned for v2.0)
+- ✅ **95%+ GRID v0.1 Compliant** (v1.6.0)
+- ✅ Production-ready with multi-protocol support (MCP, HTTP/REST, gRPC)
+- ✅ Advanced security features (MFA, injection detection, anomaly detection, secret scanning)
+- ✅ High-performance Rust engine (4-10x faster policy evaluation)
 - 📚 Comprehensive documentation and operations
 
 **Repository:** [github.com/apathy-ca/sark](https://github.com/apathy-ca/sark)
@@ -310,14 +311,20 @@ To be "GRID-compliant", implement:
 
 GRID enables pluggable protocol adapters for any interaction model:
 
-### Current
-- **MCP Adapter** – Model Context Protocol (reference implementation in SARK)
+### Implemented (SARK v1.5.0+)
+- **MCP Adapter** – Model Context Protocol with HTTP, SSE, and stdio transports
+- **HTTP/REST Adapter** – REST APIs with OpenAPI discovery, 5 auth strategies
+- **gRPC Adapter** – gRPC service-to-service with reflection and mTLS support
 
-### Planned
-- **HTTP/REST Adapter** – REST APIs and HTTP services
-- **gRPC Adapter** – gRPC service-to-service
-- **OpenAI Adapter** – OpenAI function calling
-- **Custom Adapters** – Your proprietary protocol
+### Planned (SARK v2.0)
+- **OpenAI Adapter** – OpenAI function calling governance
+- **Anthropic Adapter** – Anthropic tool use governance
+- **Custom Adapters** – Plugin system for proprietary protocols
+
+### Gateway Transports
+- **HTTP** – Traditional request/response
+- **SSE** – Server-Sent Events for streaming
+- **stdio** – Standard I/O for local processes
 
 See GRID_PROTOCOL_SPECIFICATION_v0.1.md §9 for adapter architecture.
 
@@ -330,13 +337,36 @@ See GRID_PROTOCOL_SPECIFICATION_v0.1.md §9 for adapter architecture.
 - Attacker modifies audit logs
 - Attacker forges authentication tokens
 - Denial of service attacks
+- AI-specific threats (prompt injection, data exfiltration)
+- Insider threats and privilege escalation
 
-### Mitigation
+### Defense-in-Depth Mitigation (5 Layers)
+
+**1. Network Security**
+- Kubernetes NetworkPolicy for ingress/egress
+- Domain-based egress filtering (whitelist-only)
+- Cloud provider firewall integration
+
+**2. Application Security**
 - Zero-trust architecture (explicit allow required)
-- Immutable audit logs (INSERT-ONLY storage)
+- Multi-factor authentication (TOTP, SMS, Push, Email)
 - Cryptographic token signing
 - Rate limiting and circuit breakers
+
+**3. AI-Specific Security (SARK v1.3.0+)**
+- **Prompt Injection Detection** – 20+ attack patterns, <3ms latency
+- **Secret Scanning** – 25+ secret types with auto-redaction
+- **Behavioral Anomaly Detection** – 30-day baseline, 7 anomaly types
+
+**4. Data Security**
+- Immutable audit logs (INSERT-ONLY storage)
+- Automatic secret redaction in logs
+- Encryption at rest and in transit
+
+**5. Policy Security**
+- Policy validation and testing
 - Default deny on errors
+- Policy versioning and rollback
 
 See GRID_PROTOCOL_SPECIFICATION_v0.1.md §12 for detailed security analysis.
 
@@ -370,7 +400,7 @@ See the [ROADMAP.md](ROADMAP.md) for a detailed plan for the v1.0 release.
 
 ## Compliance Matrix
 
-| Feature | GRID v0.1 | SARK v1.0 | Status |
+| Feature | GRID v0.1 | SARK v1.6.0 | Status |
 |---------|-----------|-----------|--------|
 | Core Abstractions | ✅ | ✅ | Complete |
 | Authentication | ✅ | ✅ | Complete |
@@ -378,10 +408,13 @@ See the [ROADMAP.md](ROADMAP.md) for a detailed plan for the v1.0 release.
 | Authorization (ABAC) | ✅ | ✅ | Complete |
 | Immutable Audit | ✅ | ✅ | Complete |
 | SIEM Integration | ✅ | ✅ | Complete |
-| Protocol Abstraction | ✅ | ⚠️ | MCP-only in v1.0 |
-| Federation | ✅ | ❌ | Planned for v2.0 |
-| Cost Attribution | ✅ | ❌ | Planned for v2.0 |
-| **Overall** | **v0.1** | **85%** | **Strong** |
+| MFA | ✅ | ✅ | Complete (v1.3.0) |
+| Security Controls | ✅ | ✅ | Complete (v1.3.0) |
+| Protocol Adapters | ✅ | ✅ | MCP/HTTP/gRPC (v1.5.0) |
+| Performance Optimization | ✅ | ✅ | Rust engine (v1.4.0) |
+| Federation | ✅ | ⏳ | Spec ready, v2.0 |
+| Cost Attribution | ✅ | ⏳ | Spec ready, v2.0 |
+| **Overall** | **v0.1** | **95%+** | **Excellent** |
 
 ---
 

@@ -21,45 +21,67 @@ gantt
     dateFormat  YYYY-MM-DD
     section Specification & Foundation
     v0.1 Release          :done, 2025-11-28, 1d
-    Community Feedback    :active, 2025-11-29, 30d
-    
-    section Protocol Abstraction
-    Adapter Interface Spec :2025-12-15, 14d
-    HTTP/REST Adapter      :2026-01-01, 30d
-    gRPC Adapter         :2026-01-15, 30d
+    Community Feedback    :done, 2025-11-29, 51d
+
+    section Protocol Abstraction (Completed in SARK)
+    HTTP/REST Adapter      :done, 2025-12-01, 45d
+    gRPC Adapter         :done, 2025-12-15, 45d
+    Gateway Transports     :done, 2026-01-01, 15d
+    Adapter Interface Spec :active, 2026-01-20, 30d
+
+    section Security Features (Completed in SARK)
+    MFA Implementation     :done, 2025-12-01, 30d
+    Injection Detection    :done, 2025-12-01, 30d
+    Anomaly Detection      :done, 2025-12-01, 30d
+    Secret Scanning        :done, 2025-12-01, 30d
+
+    section Performance (Completed in SARK)
+    Rust Policy Engine     :done, 2025-12-15, 45d
+    Rust Cache             :done, 2025-12-15, 45d
 
     section Federation
-    Federation Spec        :2026-02-01, 30d
-    Implementation         :2026-03-01, 45d
+    Federation Spec        :done, 2026-01-01, 30d
+    Implementation (SARK)  :active, 2026-02-01, 60d
 
     section Advanced Features
-    Cost Attribution       :2026-03-15, 30d
-    Programmatic Policies  :2026-04-01, 30d
+    Cost Attribution Spec  :done, 2026-01-01, 30d
+    Cost Attribution Impl  :active, 2026-02-01, 45d
+    Programmatic Policies  :active, 2026-02-15, 60d
 
     section Release
-    v1.0 Release Candidate :2026-05-01, 14d
-    v1.0 Final Release     :2026-05-15, 1d
+    v1.0 Release Candidate :2026-04-15, 14d
+    v1.0 Final Release     :2026-05-01, 1d
 ```
 
 ## v1.0 Feature Breakdown
 
 The following table provides a more detailed breakdown of the features planned for v1.0, along with their current status and estimated effort.
 
-| Feature                      | Status      | Description                                                                                             |
-| ---------------------------- | ----------- | ------------------------------------------------------------------------------------------------------- |
-| **Protocol Abstraction**     |             |                                                                                                         |
-| Protocol Adapter Interface   | `Not Started` | Formalize the abstract interface for creating new protocol adapters.                                    |
-| HTTP/REST Adapter            | `Not Started` | Implement a reference adapter for governing HTTP/REST APIs.                                             |
-| gRPC Adapter                 | `Not Started` | Implement a reference adapter for governing gRPC services.                                              |
-| **Federation**               |             |                                                                                                         |
-| Federation Protocol          | `Not Started` | Specify the protocol for establishing trust and exchanging information between GRID nodes.            |
-| Cross-Org Policy Evaluation  | `Not Started` | Enable a GRID node in one organization to evaluate policies for a principal from another organization. |
-| **Advanced Policy Features** |             |                                                                                                         |
-| Cost Attribution System      | `Not Started` | Introduce a standardized model for tracking and attributing costs to resource usage.                  |
-| Programmatic Policies        | `Not Started` | Allow for the implementation of complex, custom policy logic in a programmatic language.                |
-| **Other Enhancements**       |             |                                                                                                         |
-| Formalized Delegation Model  | `Not Started` | Improve the audit trail and policy control for delegated actions.                                       |
-| Standardized Rate Limiting   | `Not Started` | Define a standard set of headers for communicating rate limit information.                              |
+| Feature                      | Status      | SARK Status | Description                                                                                             |
+| ---------------------------- | ----------- | ----------- | ------------------------------------------------------------------------------------------------------- |
+| **Protocol Abstraction**     |             |             |                                                                                                         |
+| Protocol Adapter Interface   | `In Progress` | Spec drafted (v2.0) | Formalize the abstract interface for creating new protocol adapters.                                    |
+| HTTP/REST Adapter            | ✅ `Implemented` | v1.5.0+ | Implement a reference adapter for governing HTTP/REST APIs with OpenAPI discovery.                                             |
+| gRPC Adapter                 | ✅ `Implemented` | v1.5.0+ | Implement a reference adapter for governing gRPC services with reflection and mTLS.                                              |
+| Gateway Transports           | ✅ `Implemented` | v1.5.0+ | HTTP, SSE, and stdio transport implementations for MCP Gateway.                                         |
+| **Security Enhancements**    |             |             |                                                                                                         |
+| MFA (Multi-Factor Auth)      | ✅ `Implemented` | v1.3.0 | TOTP, SMS, Push, and Email MFA methods with sensitivity-based policies.                                |
+| Prompt Injection Detection   | ✅ `Implemented` | v1.3.0 | 20+ attack patterns with entropy analysis, <3ms latency.                                                |
+| Secret Scanning              | ✅ `Implemented` | v1.3.0 | 25+ secret types with auto-redaction, <1ms latency.                                                     |
+| Anomaly Detection            | ✅ `Implemented` | v1.3.0 | Behavioral baseline with 7 anomaly types and real-time alerts.                                          |
+| Network Security Controls    | ✅ `Implemented` | v1.3.0 | Kubernetes NetworkPolicy and egress filtering.                                                          |
+| **Performance Optimization** |             |             |                                                                                                         |
+| Rust Policy Engine           | ✅ `Implemented` | v1.4.0 | 4-10x faster policy evaluation with automatic Python fallback.                                          |
+| Rust In-Memory Cache         | ✅ `Implemented` | v1.4.0 | 10-50x faster than Redis, <0.5ms latency.                                                               |
+| **Federation**               |             |             |                                                                                                         |
+| Federation Protocol          | `Spec Ready` | Spec (v2.0) | Specify the protocol for establishing trust and exchanging information between GRID nodes with mTLS.            |
+| Cross-Org Policy Evaluation  | `Spec Ready` | Spec (v2.0) | Enable a GRID node in one organization to evaluate policies for a principal from another organization. |
+| **Advanced Policy Features** |             |             |                                                                                                         |
+| Cost Attribution System      | `Spec Ready` | Spec (v2.0) | Introduce a standardized model for tracking and attributing costs to resource usage with budget enforcement.                  |
+| Programmatic Policies        | `In Progress` | Infrastructure (v1.6.0) | Allow for the implementation of complex, custom policy logic in a programmatic language.                |
+| **Other Enhancements**       |             |             |                                                                                                         |
+| Formalized Delegation Model  | `Not Started` | - | Improve the audit trail and policy control for delegated actions.                                       |
+| Standardized Rate Limiting   | ✅ `Implemented` | v1.3.0 | Standard rate limiting with quotas, circuit breakers, and backpressure.                              |
 
 ## How to Contribute
 

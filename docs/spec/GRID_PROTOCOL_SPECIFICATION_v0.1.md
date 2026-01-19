@@ -1205,14 +1205,22 @@ POST /api/v1/register-resource
 
 **Authentication Methods:**
 
-| Method | Protocol | Use Case | Token Type |
-|--------|----------|----------|-----------|
-| **OIDC** | OAuth 2.0 PKCE | Human users | JWT (session) |
-| **LDAP** | BIND | Enterprise users | JWT (generated) |
-| **SAML** | Assertion | Enterprise SSO | JWT (generated) |
-| **API Key** | Custom | Services/devices | Bearer token |
-| **mTLS** | X.509 | Service-to-service | Certificate |
-| **JWT** | Custom | Token exchange | Pre-issued JWT |
+| Method | Protocol | Use Case | Token Type | MFA Support |
+|--------|----------|----------|-----------|-------------|
+| **OIDC** | OAuth 2.0 PKCE | Human users | JWT (session) | ✅ Required |
+| **LDAP** | BIND | Enterprise users | JWT (generated) | ✅ Required |
+| **SAML** | Assertion | Enterprise SSO | JWT (generated) | ✅ Required |
+| **API Key** | Custom | Services/devices | Bearer token | Optional |
+| **mTLS** | X.509 | Service-to-service | Certificate | N/A |
+| **JWT** | Custom | Token exchange | Pre-issued JWT | Optional |
+
+**MFA Requirement:** Multi-factor authentication MUST be enforced for:
+- All human user authentication (OIDC, LDAP, SAML)
+- Critical resource access (regardless of auth method)
+- High-value operations (delete, modify, admin actions)
+- Access during non-business hours to sensitive resources
+
+See §6.5.1 for complete MFA specification.
 
 **Authentication Flow (OIDC Example):**
 
@@ -1314,6 +1322,259 @@ Example: Payment Service → Database Service
 - Enforces: Only read access, limited to customer data
 - Audit logs both call and outcome
 ```
+
+### 6.5 AI-Specific Security Controls
+
+GRID implementations MUST implement the following security controls for AI-driven interactions:
+
+#### 6.5.1 Multi-Factor Authentication (MFA)
+
+**Requirement Level:** MANDATORY for critical resource access
+
+**Supported Methods:**
+- **TOTP** (Time-based One-Time Password) - RFC 6238 compliant
+- **SMS** - Text message verification codes
+- **Push Notifications** - Mobile app approval
+- **Email** - Email verification codes
+
+**Sensitivity-Based MFA Policies:**
+
+```rego
+package grid.mfa
+
+# Require MFA for critical resources
+require_mfa if {
+    input.resource.sensitivity_level == "critical"
+}
+
+# Require MFA for high-value operations
+require_mfa if {
+    input.action in ["delete", "modify", "admin"]
+    input.resource.sensitivity_level in ["medium", "high", "critical"]
+}
+
+# Require MFA during non-business hours
+require_mfa if {
+    input.resource.sensitivity_level in ["high", "critical"]
+    not is_business_hours
+}
+```
+
+**MFA Flow:**
+```
+1. Principal authenticates (username + password)
+2. GRID checks: Does this action require MFA?
+   ├─ YES → Request second factor
+   │   ├─ Generate challenge (TOTP/SMS/Push/Email)
+   │   ├─ Wait for user response (timeout: 120s default)
+   │   ├─ Verify response
+   │   └─ Log MFA event in audit trail
+   └─ NO → Proceed to authorization
+3. If MFA succeeds: Continue to authorization
+4. If MFA fails (3 attempts): Lock account, alert admin
+```
+
+#### 6.5.2 Prompt Injection Detection
+
+**Requirement Level:** REQUIRED for AI agent interactions
+
+**Detection Methods:**
+
+1. **Pattern Matching** (20+ attack patterns):
+   - Role manipulation ("Ignore previous instructions")
+   - Command injection ("Execute: rm -rf /")
+   - Context escape ("</system>", "---END SYSTEM---")
+   - Jailbreak attempts ("DAN mode", "Developer mode")
+
+2. **Entropy Analysis**:
+   - Shannon entropy scoring
+   - Unusual character distribution
+   - Excessive special characters
+
+3. **Behavioral Heuristics**:
+   - Abnormal prompt length (>10,000 chars)
+   - Repeated suspicious keywords
+   - Unicode obfuscation attempts
+
+**Performance Target:** <3ms p95 latency
+
+**Example Policy:**
+```rego
+package grid.injection_detection
+
+deny["Prompt injection detected"] if {
+    prompt_score := analyze_prompt(input.action_parameters.prompt)
+    prompt_score.risk_level in ["high", "critical"]
+}
+
+deny["Suspicious entropy detected"] if {
+    entropy := calculate_entropy(input.action_parameters.prompt)
+    entropy > 7.5  # Shannon entropy threshold
+}
+```
+
+#### 6.5.3 Secret Scanning & Redaction
+
+**Requirement Level:** MANDATORY for all audit logs and data in transit
+
+**Detected Secret Types (25+ patterns):**
+- API keys (OpenAI, GitHub, AWS, Google, Anthropic, Stripe)
+- Private keys (RSA, SSH, PGP)
+- Database connection strings
+- JWT tokens
+- OAuth tokens
+- Credit card numbers
+- Social security numbers
+
+**Redaction Strategy:**
+```
+Original:  "sk-proj-abc123def456..."
+Redacted:  "[REDACTED:OPENAI_API_KEY]"
+
+Original:  "postgresql://user:pass@host/db"
+Redacted:  "[REDACTED:DB_CONNECTION_STRING]"
+```
+
+**Performance Target:** <1ms p95 latency
+
+**Example Configuration:**
+```yaml
+secret_scanning:
+  enabled: true
+  patterns:
+    - type: openai_api_key
+      regex: "sk-[a-zA-Z0-9]{20,}"
+      redaction: "[REDACTED:OPENAI_API_KEY]"
+    - type: github_token
+      regex: "gh[ps]_[a-zA-Z0-9]{36,}"
+      redaction: "[REDACTED:GITHUB_TOKEN]"
+  scan_locations:
+    - audit_logs
+    - request_parameters
+    - response_data
+```
+
+#### 6.5.4 Behavioral Anomaly Detection
+
+**Requirement Level:** RECOMMENDED for enterprise deployments
+
+**Baseline Learning:**
+- 30-day behavioral baseline per principal
+- Multi-dimensional feature extraction
+- Continuous model updates
+
+**Anomaly Types Detected:**
+
+1. **Unusual Tool Usage**
+   - Principal suddenly uses tools they've never accessed
+   - Access outside normal usage patterns
+
+2. **Timing Anomalies**
+   - Activity during unusual hours
+   - Burst requests (rate exceeds 3σ from mean)
+
+3. **Data Volume Anomalies**
+   - Requesting significantly more data than baseline
+   - Large parameter sizes (>3σ from mean)
+
+4. **Sensitivity Escalation**
+   - Sudden access to higher sensitivity resources
+   - Progressive escalation pattern
+
+5. **Geographic Anomalies**
+   - Access from new locations
+   - Impossible travel (location A → B in impossible time)
+
+6. **Behavioral Drift**
+   - Gradual deviation from established patterns
+   - Long-term trend changes
+
+7. **Suspicious Sequences**
+   - Known attack patterns (reconnaissance → exploitation)
+   - Policy probing behavior
+
+**Response Actions:**
+```yaml
+anomaly_detection:
+  enabled: true
+  baseline_days: 30
+  actions:
+    low_risk:
+      - log_event
+      - notify_user
+    medium_risk:
+      - log_event
+      - require_mfa
+      - notify_admin
+    high_risk:
+      - log_event
+      - suspend_principal
+      - alert_security_team
+      - require_manual_review
+```
+
+**Performance Target:** <5ms analysis latency (async processing)
+
+#### 6.5.5 Network Security Controls
+
+**Requirement Level:** REQUIRED for production deployments
+
+**1. Kubernetes NetworkPolicy:**
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: grid-gateway-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: grid-gateway
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            environment: production
+      ports:
+        - protocol: TCP
+          port: 8000  # API
+        - protocol: TCP
+          port: 8443  # TLS
+  egress:
+    - to:
+      - namespaceSelector:
+          matchLabels:
+            name: approved-services
+      ports:
+        - protocol: TCP
+          port: 5432  # PostgreSQL
+        - protocol: TCP
+          port: 6379  # Redis/Valkey
+```
+
+**2. Egress Filtering (Whitelist-Only):**
+
+```yaml
+egress_policy:
+  default: deny
+  allowed_domains:
+    - "*.company.com"
+    - "api.openai.com"
+    - "api.anthropic.com"
+    - "github.com"
+  allowed_ip_ranges:
+    - "10.0.0.0/8"      # Internal network
+    - "172.16.0.0/12"   # Internal network
+    - "192.168.0.0/16"  # Internal network
+```
+
+**3. Cloud Provider Firewall Integration:**
+- AWS Security Groups
+- GCP Firewall Rules
+- Azure Network Security Groups
 
 ---
 
@@ -1777,29 +2038,160 @@ class MCPAdapter(ProtocolAdapter):
         )
 ```
 
-### 9.3 Future Adapters
+### 9.3 HTTP/REST Adapter (Implemented in SARK v1.5.0+)
 
-**HTTP/REST Adapter:**
+**Status:** ✅ Production-ready in SARK reference implementation
+
+**Features:**
+- OpenAPI/Swagger discovery for automatic resource registration
+- 5 authentication strategies (API Key, Bearer Token, Basic Auth, OAuth 2.0, mTLS)
+- RESTful semantics mapping to GRID actions
+- Request/response transformation
+
+**HTTP Request → GRID Mapping:**
 ```
 HTTP Request → GRID
 GET /api/v1/users?id=123
   ↓
-Principal from Authorization header
+Principal: Extracted from Authorization header (JWT/API Key)
 Resource: /api/v1/users
-Action: read
+Action: read (from HTTP method)
 Parameters: {id: 123}
+
+HTTP Methods → GRID Actions:
+GET    → read
+POST   → create
+PUT    → update
+PATCH  → modify
+DELETE → delete
 ```
 
-**gRPC Adapter:**
+**Authentication Support:**
+```yaml
+http_adapter:
+  authentication:
+    - type: bearer_token  # JWT validation
+    - type: api_key       # Custom API keys
+    - type: basic_auth    # Username/password
+    - type: oauth2        # OAuth 2.0 flows
+    - type: mtls          # Mutual TLS certificates
+```
+
+### 9.4 gRPC Adapter (Implemented in SARK v1.5.0+)
+
+**Status:** ✅ Production-ready in SARK reference implementation
+
+**Features:**
+- Server reflection for service discovery
+- mTLS support for service-to-service authentication
+- Bidirectional streaming support
+- Automatic protobuf schema parsing
+
+**gRPC Request → GRID Mapping:**
 ```
 gRPC Request → GRID
-service.Method(request)
+service.UserService.GetUser(request)
   ↓
-Principal from mTLS certificate + metadata
-Resource: service.Method
+Principal: Extracted from mTLS certificate + gRPC metadata
+Resource: service.UserService.GetUser
 Action: execute
-Parameters: from request message
+Parameters: Extracted from protobuf request message
+
+gRPC Metadata → Principal Context:
+- x-user-id: principal_id
+- x-role: role attribute
+- x-teams: team attributes
+- Certificate DN: service identity
 ```
+
+**Service Discovery:**
+```python
+# Automatic discovery via gRPC reflection
+grpc_adapter.discover_services(
+    host="grpc.service.com:50051",
+    tls_config={
+        "client_cert": "/path/to/cert.pem",
+        "client_key": "/path/to/key.pem",
+        "ca_cert": "/path/to/ca.pem"
+    }
+)
+
+# Registers all discovered services and methods as GRID resources
+# Example: service.UserService.GetUser → grid-resource-id
+```
+
+### 9.5 Gateway Transport Layer (Implemented in SARK v1.5.0+)
+
+**Status:** ✅ Production-ready for MCP Gateway
+
+GRID implementations SHOULD support multiple transport types for protocol adapters:
+
+**Supported Transports:**
+
+1. **HTTP Transport**
+   - Traditional request/response
+   - RESTful semantics
+   - Load balancer compatible
+   ```
+   POST /mcp/v1/tools/call
+   Content-Type: application/json
+   Authorization: Bearer <jwt>
+
+   {
+     "tool": "jira_search",
+     "arguments": {...}
+   }
+   ```
+
+2. **SSE (Server-Sent Events) Transport**
+   - Streaming responses
+   - Long-lived connections
+   - Real-time updates
+   ```
+   GET /mcp/v1/sse
+   Accept: text/event-stream
+   Authorization: Bearer <jwt>
+
+   event: tool_result
+   data: {"tool": "jira_search", "result": {...}}
+   ```
+
+3. **stdio Transport**
+   - Standard input/output
+   - Local process communication
+   - Desktop application integration
+   ```bash
+   # MCP server runs as subprocess
+   sark-gateway --transport stdio --server jira-mcp
+
+   # Reads JSON-RPC from stdin
+   # Writes responses to stdout
+   ```
+
+**Transport Auto-Detection:**
+```python
+class GatewayTransport:
+    """Automatically detect and use appropriate transport."""
+
+    def auto_detect(self, server_config: dict) -> Transport:
+        """
+        Detection order:
+        1. Check for SSE endpoint (GET /sse)
+        2. Check for HTTP endpoint (POST /tools/call)
+        3. Check for stdio capability (executable path)
+        4. Fallback to HTTP
+        """
+        if server_config.get("sse_endpoint"):
+            return SSETransport(server_config["sse_endpoint"])
+        elif server_config.get("http_endpoint"):
+            return HTTPTransport(server_config["http_endpoint"])
+        elif server_config.get("command"):
+            return StdioTransport(server_config["command"])
+        else:
+            raise ValueError("No supported transport found")
+```
+
+### 9.6 Future Adapters (Planned for SARK v2.0)
 
 **OpenAI Function Calling Adapter:**
 ```
@@ -1810,8 +2202,24 @@ OpenAI Tool Use → GRID
   "input": {...}
 }
   ↓
-Principal from API key
+Principal: Extracted from OpenAI API key
 Resource: openai-tool-query_database
+Action: execute
+Parameters: from input
+```
+
+**Anthropic Tool Use Adapter:**
+```
+Anthropic Tool Use → GRID
+{
+  "type": "tool_use",
+  "id": "toolu_123",
+  "name": "search",
+  "input": {...}
+}
+  ↓
+Principal: Extracted from Anthropic API key
+Resource: anthropic-tool-search
 Action: execute
 Parameters: from input
 ```
@@ -1824,6 +2232,7 @@ Implement ProtocolAdapter interface:
 - Translate GRID responses back
 - Extract principals
 - Register resources
+- Implement health checks
 ```
 
 ---
@@ -2035,6 +2444,182 @@ To enhance GRID-compliance:
 - ✅ Advisory governance
 - ✅ Privacy-focused
 - ✅ Community-driven
+
+### 11.4 Performance Requirements
+
+GRID implementations SHOULD meet the following performance targets for production deployments:
+
+#### 11.4.1 Policy Evaluation Latency
+
+**Cache Hit Performance (REQUIRED):**
+- p50: <2ms
+- p95: <5ms
+- p99: <10ms
+
+**Cache Miss Performance (Python/OPA Baseline):**
+- p50: <25ms
+- p95: <50ms
+- p99: <100ms
+
+**Optimized Implementation (Rust/Native):**
+- p50: <2ms
+- p95: <5ms (4-10x faster than Python baseline)
+- p99: <10ms
+
+**Cache Hit Rate Target:** 80-95% in steady-state production workloads
+
+#### 11.4.2 Throughput Targets
+
+**Minimum (REQUIRED for production):**
+- 500 requests/second (sustained)
+- 1,000 requests/second (burst, 1 minute)
+
+**Recommended (Enterprise):**
+- 850+ requests/second (sustained) - Python baseline
+- 2,100+ requests/second (sustained) - Rust-optimized
+- 5,000+ requests/second (burst, 5 minutes)
+
+**Scaling Target:**
+- Horizontal scaling via load balancing
+- Linear scaling up to 10 nodes minimum
+- Support for 50,000+ employees, 10,000+ resources
+
+#### 11.4.3 Cache Performance
+
+**Distributed Cache (Redis/Valkey baseline):**
+- Read latency: <5ms p95
+- Write latency: <10ms p95
+- Hit rate: 80-95%
+
+**In-Memory Cache (Rust-optimized):**
+- Read latency: <0.5ms p95 (10-50x faster than Redis)
+- Write latency: <1ms p95
+- Throughput: 3M-5M operations/second
+- Eviction: LRU + TTL-based
+
+**Cache Strategy:**
+```
+Policy Decision Cache:
+├── L1: In-memory (local to instance)
+│   ├── TTL: Based on resource sensitivity
+│   │   ├── Critical: 5 minutes
+│   │   ├── High: 15 minutes
+│   │   ├── Medium: 30 minutes
+│   │   └── Low: 60 minutes
+│   └── Max size: 10,000 entries
+└── L2: Distributed (Redis/Valkey)
+    ├── TTL: 2x L1 TTL
+    └── Max size: 100,000 entries
+```
+
+#### 11.4.4 Audit Logging Performance
+
+**Write Performance (REQUIRED):**
+- Async (non-blocking): <1ms p95 to queue
+- Sync (blocking): <10ms p95 to database
+- Batch writes: 1,000+ events/second
+
+**Query Performance (RECOMMENDED):**
+- Simple queries (single principal, 24h): <100ms
+- Complex queries (multiple filters, 30d): <1s
+- Full-text search: <2s
+- Export (10,000 records): <5s
+
+**SIEM Forwarding:**
+- Async forwarding (preferred): <5ms p95 to queue
+- Batch size: 100-1,000 events
+- Forward interval: 5-30 seconds
+- Retry on failure: Exponential backoff
+
+#### 11.4.5 Security Control Performance
+
+From SARK v1.3.0 reference implementation:
+
+**Prompt Injection Detection:**
+- Latency: <3ms p95
+- Throughput: 10,000+ prompts/second
+- Accuracy: 95%+ true positive rate
+
+**Secret Scanning:**
+- Latency: <1ms p95 for typical payloads (<10KB)
+- Throughput: 50,000+ scans/second
+- Patterns: 25+ secret types
+
+**Behavioral Anomaly Detection:**
+- Analysis latency: <5ms p95 (async)
+- Baseline update: Every 24 hours
+- Feature extraction: <2ms p95
+
+**MFA Challenge Generation:**
+- TOTP: <50ms
+- SMS: <500ms (network dependent)
+- Push: <200ms (network dependent)
+- Email: <1s (network dependent)
+
+#### 11.4.6 Resource Consumption Limits
+
+**Memory (per instance):**
+- Minimum: 512MB
+- Recommended: 2GB
+- With cache: 4GB (for 10,000 cached policies)
+
+**CPU:**
+- Minimum: 2 cores
+- Recommended: 4-8 cores
+- Rust engine benefits from additional cores (parallel evaluation)
+
+**Storage:**
+- Audit logs: Plan for 1MB/1,000 events
+- Policy storage: <10MB for 1,000 policies
+- Cache storage: ~100KB per 1,000 cached decisions
+
+**Database Connections:**
+- Min pool: 10 connections
+- Max pool: 50 connections
+- Idle timeout: 5 minutes
+
+#### 11.4.7 Implementation Recommendations
+
+**For High-Performance Deployments:**
+
+1. **Use Rust-based policy engine** (4-10x faster)
+   - Feature flag for gradual rollout
+   - Automatic fallback to Python OPA
+   - Available in SARK v1.4.0+
+
+2. **Use Rust in-memory cache** (10-50x faster)
+   - DashMap with LRU eviction
+   - Configurable max size
+   - Available in SARK v1.4.0+
+
+3. **Enable distributed caching** (Redis/Valkey)
+   - Share cache across instances
+   - Reduce policy engine queries
+   - 80-95% cache hit rate typical
+
+4. **Async audit logging**
+   - Non-blocking writes
+   - Batch SIEM forwarding
+   - Queue-based architecture
+
+5. **Horizontal scaling**
+   - Stateless API layer
+   - Load balancer with sticky sessions (optional)
+   - Shared cache layer
+
+**Performance Validation:**
+
+```python
+# Example benchmark targets (from SARK v1.4.0+)
+pytest tests/benchmarks/ --benchmark-only
+
+Expected results:
+- policy_evaluation[cache_hit]: <5ms p95
+- policy_evaluation[rust_engine]: <5ms p95
+- secret_scanning: <1ms p95
+- injection_detection: <3ms p95
+- cache_read[rust]: <0.5ms p95
+```
 
 ---
 
