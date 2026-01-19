@@ -67,12 +67,15 @@ User → AI Agent → Tool/API → Database
 - Zero-trust enforcement
 - **Use case:** Regulated organizations, enterprises
 
-### GRID-Home (YORI - Planned)
+### GRID-Home (YORI - In Development)
 - Advisory governance (logging, auditing, and recommendations, not enforcement)
+- Network-level visibility and control
+- OPNsense-based implementation
 - Optional SIEM
 - Simple configurations
 - Privacy-focused
-- **Use case:** Home users, open-source projects
+- **Use case:** Home users, open-source projects, small businesses
+- **Repository:** [github.com/apathy-ca/yori](https://github.com/apathy-ca/yori)
 
 ---
 
@@ -390,11 +393,13 @@ See the [ROADMAP.md](ROADMAP.md) for a detailed plan for the v1.0 release.
 - ➕ Programmatic policy support
 - ➕ Community feedback integration
 
-### YORI (2026 Q2-Q3)
-- ➕ GRID-Home reference implementation
-- ➕ Privacy-focused governance
-- ➕ Advisory mode
-- ➕ Community-driven policies
+### YORI (2026 Q1-Q2) - Active Development
+- 🚧 GRID-Home reference implementation
+- 🚧 OPNsense-based network governance
+- 🚧 Privacy-focused governance
+- 🚧 Advisory mode (transparency without enforcement)
+- 🚧 Community-driven policies
+- **Repository:** [github.com/apathy-ca/yori](https://github.com/apathy-ca/yori)
 
 ---
 

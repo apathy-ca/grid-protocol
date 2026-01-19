@@ -772,7 +772,21 @@ GRID defines two profiles for different deployment contexts:
 - Focus on transparency over enforcement
 - Community-driven policies
 
-**Reference Implementation:** YORI (planned)
+**Reference Implementation:** YORI (active development)
+- **Platform:** OPNsense-based network governance
+- **Approach:** Network-level visibility with advisory policies
+- **Repository:** [github.com/apathy-ca/yori](https://github.com/apathy-ca/yori)
+- **Status:** In development (2026 Q1-Q2)
+
+**YORI Architecture (OPNsense-based):**
+- Runs as OPNsense plugin/extension
+- Network-level traffic inspection and classification
+- Protocol detection (MCP, HTTP/REST, gRPC, etc.)
+- Advisory policy engine (log and recommend, not block)
+- Privacy-preserving audit logs (local-first)
+- Simple web UI for policy configuration
+- Optional SIEM forwarding for advanced users
+- Zero configuration for basic home network governance
 
 **Comparison:**
 
@@ -2439,11 +2453,24 @@ To enhance GRID-compliance:
 - ✅ Production-ready
 - ✅ MCP-focused
 
-**YORI (Home) - Planned**
-- ✅ GRID-Home profile
-- ✅ Advisory governance
-- ✅ Privacy-focused
-- ✅ Community-driven
+**YORI (Home) - Active Development**
+- 🚧 GRID-Home profile
+- 🚧 OPNsense-based network governance platform
+- 🚧 Advisory governance (transparency without enforcement)
+- 🚧 Privacy-focused
+- 🚧 Community-driven
+- **Repository:** [github.com/apathy-ca/yori](https://github.com/apathy-ca/yori)
+- **Status:** In development (2026 Q1-Q2)
+
+**OPNsense Integration Benefits:**
+- Network-level visibility into all AI/automation traffic
+- DPI (Deep Packet Inspection) for protocol detection
+- Traffic shaping and QoS for resource prioritization
+- Firewall rules for network-level policy enforcement (optional)
+- VPN integration for remote governance
+- Plugin architecture for extensibility
+- Familiar web UI for home users
+- Perfect fit for advisory mode (log, analyze, recommend)
 
 ### 11.4 Performance Requirements
 
